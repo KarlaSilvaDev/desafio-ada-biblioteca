@@ -135,11 +135,12 @@ export class BibliotecaService {
     }
 
     removerUsuario(id) {
-        const usuario = this.#usuarios.find(usuario => usuario.id = id);
-        const possuiEmprestimoAtivo = usuario.historicoEmprestimos.some(emprestimo => !emprestimo.devolvido);
+        const usuario = this.#usuarios.find(usuario => usuario.id == id);
+
+        const possuiEmprestimoAtivo = this.#emprestimos.some(emprestimo => emprestimo.usuario == id && !emprestimo.devolvido);
 
         if (possuiEmprestimoAtivo) {
-            alert("O usuário não pode ser excluído, pois possui empréstimo ativo.");
+            alert("O usuário não pode ser excluído, pois possui empréstimo ativo. Por favor, solicite a devolução do livro antes de prosseguir com a exclusão.");
             return;
         }
 
@@ -153,6 +154,7 @@ export class BibliotecaService {
     emprestar(livroId, usuarioId) {
         const livro = this.#livros.find(l => l.id === livroId);
         const usuario = this.#usuarios.find(u => u.id === usuarioId);
+
         if (!livro || !usuario) return null;
 
         const disp = (livro.totalDisponivel ?? livro.totalExemplares) | 0;
@@ -165,7 +167,11 @@ export class BibliotecaService {
         this.#emprestimos.push(emp);
 
         livro.totalDisponivel = disp - 1;
-        if (usuario.adicionarEmprestimo) usuario.adicionarEmprestimo(emp);
+
+        if (usuario.adicionarEmprestimo) {
+            usuario.adicionarEmprestimo(emp);
+            console.log(usuario.historicoEmprestimos)
+        }
 
         this.salvarNoLocalStorage();
         return emp;
