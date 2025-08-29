@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Ada</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen">
+
+    <header class="bg-zinc-950 text-white fixed w-full top-0 shadow-lg z-10">
+        <div class="container mx-auto flex items-center justify-between p-4">
+            <h1 class="text-2xl font-bold text-lime-500">Biblioteca - Desafio Ada</h1>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <aside class="w-56 bg-blue-100 h-screen fixed top-16 ubuntu-regular">
+            <nav class="flex flex-col p-4 space-y-4 text-slate-950 ">
+                <button class="menu-item flex items-center space-x-2 p-3 rounded-lg" data-tab="dashboard">
+                    <span class="material-icons">dashboard</span>
+                    <span>Visão Geral</span>
+                </button>
+                <button class="menu-item flex items-center space-x-2 p-3 rounded-lg" data-tab="livros">
+                    <span class="material-icons">menu_book</span>
+                    <span>Livros</span>
+                </button>
+
+                <button class="menu-item flex items-center space-x-2 p-3 rounded-lg" data-tab="autores">
+                    <span class="material-icons">badge</span>
+                    <span>Autores</span>
+                </button>
+
+                <button class="menu-item flex items-center space-x-2 p-3 rounded-lg" data-tab="usuarios">
+                    <span class="material-icons">person</span>
+                    <span>Usuários</span>
+                </button>
+                <button class="menu-item flex items-center space-x-2 p-3 rounded-lg" data-tab="emprestimos">
+                    <span class="material-icons">library_books</span>
+                    <span>Empréstimos</span>
+                </button>
+            </nav>
+        </aside>
+
+        <main class="ml-64 w-full p-6">
+            <div id="dashboard" class="tab-content hidden">
+                <h2 class="text-2xl font-semibold mb-1 text-zinc-900">Visão Geral</h2>
+                <p class="text-slate-600 mb-6">Aqui você pode ver os dados principais da biblioteca:</p>
+            
+                <section class="grid md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-white/90 backdrop-blur p-6 rounded-xl shadow flex items-center gap-4 border border-lime-200">
+                    <span class="material-icons text-lime-500 text-5xl self-stretch">menu_book</span>
+                    <div>
+                    <h3 class="text-lg font-medium text-zinc-900">Total de Livros</h3>
+                    <p id="total-livros" class="text-2xl font-extrabold text-zinc-950">0</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow flex items-center gap-5 border border-blue-200">
+                    <span class="material-icons text-blue-500 text-5xl">assignment_return</span>
+                    <div>
+                    <h3 class="text-lg font-medium text-zinc-900">Empréstimos Ativos</h3>
+                    <p id="total-emprestimos-ativos" class="text-2xl font-extrabold text-zinc-950">0</p>
+                    </div>
+                </div>
+        
+                <div class="bg-white p-6 rounded-xl shadow flex items-center gap-5 border border-emerald-200">
+                    <span class="material-icons text-emerald-500 text-5xl">group</span>
+                    <div>
+                    <h3 class="text-lg font-medium text-zinc-900">Usuários</h3>
+                    <p id="total-usuarios" class="text-2xl font-extrabold text-zinc-950">0</p>
+                    </div>
+                </div>
+                </section>
+            
+                <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow border border-slate-200">
+                    <h3 class="text-lg font-medium mb-4 text-zinc-900">Livros: Disponíveis x Emprestados</h3>
+                    <canvas id="graficoLivros" width="600" height="320" class="w-full"></canvas>
+                </div>
+                </section>
+            </div>
+  
+            <div id="livros" class="tab-content">
+                <div class="flex justify-between items-center mb-6 border-b-2 pb-2 border-lime-200">
+                    <h2 class="text-3xl text-gray-900 ubuntu-bold">Livros</h2>
+                    <button id="adicionarLivroBtn" class="shadow-lg shadow-lime-500/50 w-48 font-semibold bg-lime-500 text-slate-950 px-4 py-2 rounded-lg hover:bg-lime-400 hover:font-bold flex items-center space-x-2">
+                        <span class="material-icons">add</span>
+                        <div class="align-center">
+                            <span>Adicionar Livro</span>
+                        </div>
+                    </button>
+                </div>
+                <form id="adicionarLivroForm" class="hidden space-y-4 bg-white p-6 rounded-lg shadow-md mb-6 ubuntu-regular">
+                    <div class="grid grid-cols-3 grid-rows-1 gap-4">
+                        <div class="col-span-2">
+                            <label for="titulo" class="block text-sm font-medium text-gray-700 mb-2">Título</label>
+                            <input type="text" id="titulo" class="w-full p-2 border rounded-lg focus:outline-lime-300 hover:ring-blue-500 hover:border-blue-500 h-10" required>
+                        </div>
+                        <div>
+                            <label for="autor" class="block text-sm font-medium text-gray-700 mb-2">Autor</label>
+                            <select id="autor" class="w-full p-2 border rounded-lg focus:outline-lime-300 hover:ring-blue-500 hover:border-blue-500 h-10" required>
+                                <option value="" disabled selected>Selecione um Autor</option>
+                             
+                            </select>
+                            <button type="button" id="novoAutorBtn" class="mt-2 text-sm text-blue-600 hover:underline">Adicionar novo autor</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-6 grid-rows-1 gap-4">
+                        <div class="col-span-1">
+                            <label for="ano" class="block text-sm font-medium text-gray-700 mb-2">Ano</label>
+                            <input type="number" id="ano" class="w-full p-2 border rounded-lg focus:outline-lime-300 hover:ring-blue-500 hover:border-blue-500 h-10" min="1000"   required>
+                        </div>
+                        <div class="col-span-2">
+                            <label for="genero" class="block text-sm font-medium text-gray-700 mb-2">Gênero</label>
+                            <select id="genero" class="w-full p-2 border rounded-lg focus:outline-lime-300 hover:ring-blue-500 hover:border-blue-500 h-10" required>
+                                <option value="" disabled selected>Selecione o gênero</option>
+                             
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label for="editora" class="block text-sm font-medium text-gray-700 mb-2">Editora</label>
+                            <input type="text" id="editora" class="w-full p-2 border rounded-lg focus:outline-lime-300 hover:ring-blue-500 hover:border-blue-500 h-10" min="1000"  required>
+                        </div>
+                        <div class="col-span-1">
+                            <label for="exemplares" class="block text-sm font-medium text-gray-700 mb-2">Total de Exemplares</label>
+                            <input type="number" id="exemplares" class="w-full p-2 border rounded-lg focus:outline-lime-300 hover:ring-blue-500 hover:border-blue-500 h-10" min="1"   required>
+                        </div>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="button" id="salvarLivroBtn" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600">Salvar</button>
+                    </div>
+                </form>
+                <div class="overflow-x-auto">
+                    <table class="table-auto w-full bg-white shadow-lg rounded-lg overflow-hidden">
+                        <thead class="bg-slate-200 text-gray-900 border-1 border-slate-600">
+                            <tr>
+                                <th class="px-4 py-2">ID</th>
+                                <th class="px-4 py-2">Título</th>
+                                <th class="px-4 py-2">Autor</th>
+                                <th class="px-4 py-2">Ano</th>
+                                <th class="px-4 py-2">Gênero</th>
+                                <th class="px-4 py-2">Editora</th>
+                                <th class="px-4 py-2">Disponíveis</th>
+                                <th class="px-4 py-2">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="livrosTable" class="divide-y divide-gray-200">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="autores" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-6 border-b-2 pb-2 border-lime-200">
+                    <h2 class="text-3xl text-gray-900 ubuntu-bold">Autores</h2>
+                    <button id="adicionarAutorBtn" class="shadow-lg shadow-lime-500/50 w-48 font-semibold bg-lime-500 text-slate-950 px-4 py-2 rounded-lg hover:bg-lime-400 hover:font-bold flex items-center space-x-2">
+                        <span class="material-icons">add</span>
+                        <span>Adicionar Autor</span>
+                    </button>
+                </div>
+
+                <form id="adicionarAutorForm" class="hidden space-y-4 bg-white p-6 rounded-lg shadow-md mb-6 ubuntu-regular">
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="col-span-1">
+                            <label for="nomeAutorCrud" class="block text-sm font-medium text-gray-700 mb-2">Nome</label>
+                            <input type="text" id="nomeAutorCrud" class="w-full p-2 border rounded-lg focus:outline-lime-300 hover:ring-blue-500 hover:border-blue-500 h-10" required>
+                        </div>
+                        <div class="col-span-1">
+                            <label for="nacionalidadeAutorCrud" class="block text-sm font-medium text-gray-700 mb-2">Nacionalidade</label>
+                            <input type="text" id="nacionalidadeAutorCrud" class="w-full p-2 border rounded-lg focus:outline-lime-300 hover:ring-blue-500 hover:border-blue-500 h-10" required>
+                        </div>
+                        <div class="col-span-1">
+                            <label for="anoNascimentoAutorCrud" class="block text-sm font-medium text-gray-700 mb-2">Ano de Nascimento</label>
+                            <input type="number" id="anoNascimentoAutorCrud" class="w-full p-2 border rounded-lg focus:outline-lime-300 hover:ring-blue-500 hover:border-blue-500 h-10" required>
+                        </div>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="button" id="salvarAutorCrudBtn" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600">Salvar</button>
+                    </div>
+                </form>
+
+                <div class="overflow-x-auto">
+                    <table class="table-auto w-full bg-white shadow-lg rounded-lg overflow-hidden">
+                        <thead class="bg-slate-200 text-gray-900 border-1 border-slate-600">
+                            <tr>
+                                <th class="px-4 py-2">ID</th>
+                                <th class="px-4 py-2">Nome</th>
+                                <th class="px-4 py-2">Nacionalidade</th>
+                                <th class="px-4 py-2">Ano Nasc.</th>
+                                <th class="px-4 py-2">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="autoresTable" class="divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="usuarios" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-6 border-b-2 pb-2 border-lime-200">
+                    <h2 class="text-3xl text-gray-900 ubuntu-bold">Usuários</h2>
+                    <button id="adicionarUsuarioBtn" class="shadow-lg shadow-lime-500/50 w-48 font-semibold bg-lime-500 text-slate-950 px-4 py-2 rounded-lg hover:bg-lime-400 hover:font-bold flex items-center space-x-2">
+                        <span class="material-icons">add</span>
+                        <span>Adicionar Usuário</span>
+                    </button>
+                </div>
+                <form id="adicionarUsuarioForm" class="hidden space-y-4 bg-white p-6 rounded-lg shadow-md mb-6">
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="col-span-1">
+                            <label for="nomeUsuario" class="block text-sm font-medium text-gray-700 mb-2">Nome</label>
+                            <input type="text" id="nomeUsuario" class="w-full p-2 border rounded-lg focus:outline-lime-300 hover:ring-blue-500 hover:border-blue-500 h-10" required>
+                        </div>
+                        <div class="col-span-1">
+                            <label for="matricula" class="block text-sm font-medium text-gray-700 mb-2">Matrícula</label>
+                            <input type="text" id="matricula" class="w-full p-2 border rounded-lg focus:outline-lime-300 hover:ring-blue-500 hover:border-blue-500 h-10" required>
+                        </div>
+                        <div class="col-span-1">
+                            <label for="perfilUsuario" class="block text-sm font-medium text-gray-700 mb-2">Perfil</label>
+                            <select id="perfilUsuario" class="w-full p-2 border rounded-lg focus:outline-lime-300 hover:ring-blue-500 hover:border-blue-500 h-10" required>
+                                <option value="" disabled selected>Selecione o perfil</option>
+                                <option value="ALUNO">Aluno</option>
+                                <option value="PROFESSOR">Professor</option>
+                                <option value="ADMIN">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="col-span-1 hidden" id="grupoCurso">
+                            <label for="cursoUsuario" class="block text-sm font-medium text-gray-700 mb-2">Curso</label>
+                            <input type="text" id="cursoUsuario" class="w-full p-2 border rounded-lg focus:outline-lime-300 hover:ring-blue-500 hover:border-blue-500 h-10">
+                        </div>
+                        <div class="col-span-1 hidden" id="grupoDepartamento">
+                            <label for="departamentoUsuario" class="block text-sm font-medium text-gray-700 mb-2">Departamento</label>
+                            <input type="text" id="departamentoUsuario" class="w-full p-2 border rounded-lg focus:outline-lime-300 hover:ring-blue-500 hover:border-blue-500 h-10">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="button" id="salvarUsuarioBtn" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600">Salvar</button>
+                    </div>
+                </form>
+                <div class="overflow-x-auto">
+                    <table class="table-auto w-full bg-white shadow-lg rounded-lg overflow-hidden">
+                        <thead class="bg-slate-200 text-gray-900 border-1 border-slate-600">
+                            <tr>
+                                <th class="px-4 py-2">ID</th>
+                                <th class="px-4 py-2">Nome</th>
+                                <th class="px-4 py-2">Matrícula</th>
+                                <th class="px-4 py-2">Perfil</th>
+                                <th class="px-4 py-2">Curso/Departamento</th>
+                                <th class="px-4 py-2">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usuariosTable" class="divide-y divide-gray-200">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="emprestimos" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-6 border-b-2 pb-2 border-lime-200">
+                    <h2 class="text-3xl text-gray-900 ubuntu-bold">Empréstimos</h2>
+                    <button id="adicionarEmprestimoBtn" class="shadow-lg shadow-lime-500/50 w-56 font-semibold bg-lime-500 text-slate-950 px-4 py-2 rounded-lg hover:bg-lime-400 hover:font-bold flex items-center space-x-2">
+                        <span class="material-icons">add</span>
+                        <span>Novo Empréstimo</span>
+                    </button>
+                </div>
+
+                <form id="adicionarEmprestimoForm" class="hidden space-y-4 bg-white p-6 rounded-lg shadow-md mb-6">
+                    <div class="grid grid-cols-3 gap-4">
+                        <div>
+                            <label for="livroEmprestimo" class="block text-sm font-medium text-gray-700 mb-2">Livro</label>
+                            <select id="livroEmprestimo" class="w-full p-2 border rounded-lg focus:outline-lime-300 hover:ring-blue-500 hover:border-blue-500 h-10" required>
+                                <option value="" disabled selected>Selecione um livro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="usuarioEmprestimo" class="block text-sm font-medium text-gray-700 mb-2">Usuário</label>
+                            <select id="usuarioEmprestimo" class="w-full p-2 border rounded-lg focus:outline-lime-300 hover:ring-blue-500 hover:border-blue-500 h-10" required>
+                                <option value="" disabled selected>Selecione um usuário</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="button" id="salvarEmprestimoBtn" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600">Salvar</button>
+                    </div>
+                </form>
+
+                <div class="overflow-x-auto">
+                    <table class="table-auto w-full bg-white shadow-lg rounded-lg overflow-hidden">
+                        <thead class="bg-slate-200 text-gray-900 border-1 border-slate-600">
+                            <tr>
+                                <th class="px-4 py-2">ID</th>
+                                <th class="px-4 py-2">Livro</th>
+                                <th class="px-4 py-2">Usuário</th>
+                                <th class="px-4 py-2">Empréstimo</th>
+                                <th class="px-4 py-2">Prev. Devolução</th>
+                                <th class="px-4 py-2">Devolução</th>
+                                <th class="px-4 py-2">Status</th>
+                                <th class="px-4 py-2">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="emprestimosTable" class="divide-y divide-gray-200">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="modalAutor" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden ubuntu-regular">
+        <div class="bg-white rounded-lg shadow-lg w-96 p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Adicionar Novo Autor</h2>
+            <form id="formAutor" class="space-y-4">
+                <div>
+                    <label for="nomeAutor" class="block text-sm font-medium text-gray-700 mb-2">Nome do Autor</label>
+                    <input type="text" id="nomeAutor" class="w-full p-2 border rounded-lg focus:outline-lime-300 hover:ring-blue-500 hover:border-blue-500 h-10" placeholder="Digite o nome do autor" required>
+                </div>
+                <div>
+                    <label for="nacionalidadeAutor" class="block text-sm font-medium text-gray-700 mb-2">Nacionalidade</label>
+                    <input type="text" id="nacionalidadeAutor" class="w-full p-2 border rounded-lg focus:outline-lime-300 hover:ring-blue-500 hover:border-blue-500 h-10" placeholder="Digite a nacionalidade" required>
+                </div>
+                <div>
+                    <label for="anoNascimentoAutor" class="block text-sm font-medium text-gray-700 mb-2">Ano Nascimento</label>
+                    <input type="number" id="anoNascimentoAutor" class="w-full p-2 border rounded-lg focus:outline-lime-300 hover:ring-blue-500 hover:border-blue-500 h-10" placeholder="Digite o ano de nascimento" required>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="cancelarAutorBtn" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Cancelar</button>
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="./local-storage.js"></script>
+    <script type="module" src="./livro-crud.js"></script>
+    <script type="module" src="./autor-crud.js"></script>
+    <script type="module" src="./emprestimo-crud.js"></script>
+    <script type="module" src="./menu-lateral.js"></script>
+    <script type="module" src="./usuario-crud.js"></script>
+    <script type="module" src="./dashboard.js"></script>
+</body>
+</html>
