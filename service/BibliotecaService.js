@@ -54,15 +54,43 @@ export class BibliotecaService {
     }
 
     editarLivro(id, dados) {
-        const i = this.#livros.findIndex(l => l.id === id);
-        if (i === -1) return null;
-        const merged = { ...this.#livros[i].toJSON(), ...dados, id };
-        const novo = Livro.fromJSON(merged);
-        const autorObj = this.#autores.find(a => a.id === novo.autor);
-        if (autorObj && novo.setAutor) novo.setAutor(autorObj);
-        this.#livros[i] = novo;
+        const indice = this.#livros.findIndex(livro => livro.id == id);
+
+        if (indice === -1) {
+            alert('Livro não encontrado');
+            return null;
+        };
+
+        const livro = this.#livros.find(livro => livro.id === id);
+
+        console.log(dados)
+        console.log((livro.totalExemplares))
+
+        //se eu diminuir o total de exemplares, vou ter que diminuir a quantidade de livros disponíveis (e isso não pode ser menor que zero)
+        //se eu aumentar a quantidade de exemplares, vou ter que aumentar a quantidade de livros disponivels
+        if (dados.totalExemplares > livro.totalExemplares) {
+            dados.totalDisponivel = livro.totalDisponivel + (dados.totalExemplares - livro.totalExemplares);
+            console.log(dados.totalDisponivel)
+
+        } else if ((livro.totalExemplares - dados.totalExemplares) <= livro.totalDisponivel) {
+            dados.totalDisponivel = livro.totalDisponivel - (livro.totalExemplares - dados.totalExemplares);
+            console.log(dados.totalDisponivel)
+        } else {
+            alert(`Não é possível reduzir a quantidade de exemplares para o valor informado. Há apenas ${livro.totalDisponivel} livros disponíveis. Logo, apenas essa quantidade pode ser retirada do acervo.`)
+            return;
+        }
+
+        const livroEditado = Livro.fromJSON({ ...livro.toJSON(), ...dados });
+
+        const autorObj = this.#autores.find(autor => autor.id === livroEditado.autor);
+
+        if (autorObj && livroEditado.setAutor) {
+            livroEditado.setAutor(autorObj)
+        };
+
+        this.#livros[indice] = livroEditado;
         this.salvarNoLocalStorage();
-        return novo;
+        return livroEditado;
     }
 
     removerLivro(id) {

@@ -57,28 +57,28 @@ export class Livro {
         return this.#autorObj;
     }
 
-    set titulo(v) {
-        this.#titulo = v;
+    set titulo(titulo) {
+        this.#titulo = titulo;
     }
 
-    set ano(v) {
-        this.#ano = v;
+    set ano(ano) {
+        this.#ano = ano;
     }
 
-    set genero(v) {
-        this.#genero = v;
+    set genero(genero) {
+        this.#genero = genero;
     }
 
-    set editora(v) {
-        this.#editora = v;
+    set editora(editora) {
+        this.#editora = editora;
     }
 
-    set totalExemplares(v) {
-        this.#totalExemplares = v;
+    set totalExemplares(totalExemplares) {
+        this.#totalExemplares = totalExemplares;
     }
 
-    set totalDisponivel(v) {
-        this.#totalDisponivel = v;
+    set totalDisponivel(totalDisponivel) {
+        this.#totalDisponivel = totalDisponivel;
     }
 
     setAutor(autorInstance) {
@@ -88,9 +88,12 @@ export class Livro {
 
     toJSON() {
         return {
-            id: this.#id, titulo: this.#titulo,
+            id: this.#id,
+            titulo: this.#titulo,
             autor: this.#autorId,
-            ano: this.#ano, genero: this.#genero, editora: this.#editora,
+            ano: this.#ano,
+            genero: this.#genero,
+            editora: this.#editora,
             totalExemplares: this.#totalExemplares, totalDisponivel: this.#totalDisponivel
         };
     }

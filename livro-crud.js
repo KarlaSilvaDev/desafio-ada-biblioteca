@@ -63,13 +63,13 @@ function renderizarTabelaLivros() {
 
 function editarLivro(id) {
     const livro = bibliotecaService.listarLivros().find(livro => livro.id === id);
-    if (!livro) return;
     livroEditando = id;
     tituloInput.value = livro.titulo;
     autorInput.value = livro.autor;
     anoInput.value = livro.ano;
     generoInput.value = livro.genero;
     editoraInput.value = livro.editora;
+
     exemplaresInput.value = livro.totalExemplares;
     adicionarLivroForm.classList.remove("hidden");
 }
@@ -89,7 +89,7 @@ function salvarLivro(e) {
         ano: anoInput.value,
         genero: generoInput.value,
         editora: (editoraInput.value || "").trim(),
-        totalExemplares: parseInt(exemplaresInput.value, 10)
+        totalExemplares: parseInt(exemplaresInput.value)
     };
 
     if (livroEditando) {
