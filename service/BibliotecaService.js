@@ -36,6 +36,20 @@ export class BibliotecaService {
     }
 
     removerAutor(id) {
+        const autor = this.#autores.find(autor => autor.id == id);
+
+        if (!autor) {
+            alert("Autor não encontrado.");
+            return;
+        }
+
+        const estaVinculadoLivro = this.#livros.some(livro => livro.autor === id);
+
+        if (estaVinculadoLivro) {
+            alert("Não é possível excluir o autor, pois ele está vinculado à um livro cadastrado no acervo.");
+            return;
+        }
+
         this.#autores = this.#autores.filter(a => a.id !== id);
         this.salvarNoLocalStorage();
     }
@@ -63,18 +77,11 @@ export class BibliotecaService {
 
         const livro = this.#livros.find(livro => livro.id === id);
 
-        console.log(dados)
-        console.log((livro.totalExemplares))
-
-        //se eu diminuir o total de exemplares, vou ter que diminuir a quantidade de livros disponíveis (e isso não pode ser menor que zero)
-        //se eu aumentar a quantidade de exemplares, vou ter que aumentar a quantidade de livros disponivels
         if (dados.totalExemplares > livro.totalExemplares) {
             dados.totalDisponivel = livro.totalDisponivel + (dados.totalExemplares - livro.totalExemplares);
-            console.log(dados.totalDisponivel)
 
         } else if ((livro.totalExemplares - dados.totalExemplares) <= livro.totalDisponivel) {
             dados.totalDisponivel = livro.totalDisponivel - (livro.totalExemplares - dados.totalExemplares);
-            console.log(dados.totalDisponivel)
         } else {
             alert(`Não é possível reduzir a quantidade de exemplares para o valor informado. Há apenas ${livro.totalDisponivel} livros disponíveis. Logo, apenas essa quantidade pode ser retirada do acervo.`)
             return;
