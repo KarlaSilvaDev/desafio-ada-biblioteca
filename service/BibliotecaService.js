@@ -94,7 +94,22 @@ export class BibliotecaService {
     }
 
     removerLivro(id) {
-        this.#livros = this.#livros.filter(l => l.id !== id); this.salvarNoLocalStorage();
+        const livro = this.#livros.find(livro => livro.id == id);
+
+        if (!livro) {
+            alert("Livro não encontrado!");
+            return;
+        }
+
+        const haExemplarEmprestado = this.#emprestimos.some(emprestimo => emprestimo.livro == id && !emprestimo.devolvido);
+
+        if (haExemplarEmprestado) {
+            alert("O livro não pode ser excluído, pois há exemplar em empréstimo ativo. Aguarde a devolução.");
+            return;
+        }
+
+        this.#livros = this.#livros.filter(l => l.id !== id);
+        this.salvarNoLocalStorage();
     }
 
     listarLivros() {
