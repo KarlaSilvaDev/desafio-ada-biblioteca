@@ -84,11 +84,11 @@ export class BibliotecaService {
     }
 
     editarUsuario(id, dados) {
-        const usuarioExiste = this.#usuarios.findIndex(usuario => usuario.id === id);
+        const indice = this.#usuarios.findIndex(usuario => usuario.id === id);
 
-        if (usuarioExiste === -1) return null;
+        if (indice === -1) return null;
 
-        const merged = { ...this.#usuarios[i].toJSON(), ...dados, id };
+        const merged = { ...this.#usuarios[indice].toJSON(), ...dados, id };
         let instanciaUsuario;
 
         if (merged.perfil === "ALUNO") {
@@ -101,12 +101,20 @@ export class BibliotecaService {
             instanciaUsuario = UsuarioAdmin.fromJSON(merged);
         }
 
-        this.#usuarios[i] = instanciaUsuario;
+        this.#usuarios[indice] = instanciaUsuario;
         this.salvarNoLocalStorage();
         return instanciaUsuario;
     }
 
     removerUsuario(id) {
+        const usuario = this.#usuarios.find(usuario => usuario.id = id);
+        const possuiEmprestimoAtivo = usuario.historicoEmprestimos.some(emprestimo => !emprestimo.devolvido);
+
+        if (possuiEmprestimoAtivo) {
+            alert("O usuário não pode ser excluído, pois possui empréstimo ativo.");
+            return;
+        }
+
         this.#usuarios = this.#usuarios.filter(u => u.id !== id); this.salvarNoLocalStorage();
     }
 

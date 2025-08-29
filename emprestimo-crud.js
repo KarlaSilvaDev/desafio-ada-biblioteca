@@ -19,7 +19,7 @@ function popularSelects() {
         if (disponivel > 0) {
             const opcao = document.createElement("option");
             opcao.value = livro.id;
-            opcao.textContent = `${livro.titulo} (${disp} disp.)`;
+            opcao.textContent = `${livro.titulo} (${disponivel} disp.)`;
             livroSelect.appendChild(opcao);
         }
     });
@@ -31,7 +31,7 @@ function popularSelects() {
             usuario.perfil === "PROFESSOR" ? (usuario.departamento ?? "") : "";
         const opcao = document.createElement("option");
         opcao.value = usuario.id;
-        opcao.textContent = `${u.nome} - ${usuario.perfil}${extra ? " • " + extra : ""}`;
+        opcao.textContent = `${usuario.nome} - ${usuario.perfil}${extra ? " • " + extra : ""}`;
         usuarioSelect.appendChild(opcao);
     });
 }
