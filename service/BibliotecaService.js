@@ -137,6 +137,11 @@ export class BibliotecaService {
     removerUsuario(id) {
         const usuario = this.#usuarios.find(usuario => usuario.id == id);
 
+        if (!usuario) {
+            alert("Usuário não encontrado");
+            return;
+        }
+
         const possuiEmprestimoAtivo = this.#emprestimos.some(emprestimo => emprestimo.usuario == id && !emprestimo.devolvido);
 
         if (possuiEmprestimoAtivo) {
@@ -144,7 +149,8 @@ export class BibliotecaService {
             return;
         }
 
-        this.#usuarios = this.#usuarios.filter(u => u.id !== id); this.salvarNoLocalStorage();
+        this.#usuarios = this.#usuarios.filter(u => u.id !== id);
+        this.salvarNoLocalStorage();
     }
 
     listarUsuarios() {
